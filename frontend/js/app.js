@@ -16,6 +16,9 @@
 const cssVar = (name) =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
+const charts = {};           // name -> Chart instance
+let booted = false;          // theme init runs before the charts exist
+
 const ATTACK_LABELS = { dos: "DoS", fuzzy: "Fuzzy", gear: "Gear", rpm: "RPM",
                         normal: "Normal" };
 const attackColor = (type) => cssVar(`--c-${type}`) || cssVar("--c-normal");
@@ -48,9 +51,8 @@ function chartDefaults() {
   Chart.defaults.plugins.tooltip.borderWidth = 1;
 }
 
-const charts = {};           // name -> Chart instance
 function restyleCharts() {
-  if (typeof Chart === "undefined") return;
+  if (typeof Chart === "undefined" || !booted) return;
   chartDefaults();
   Object.values(charts).forEach((c) => c && c.destroy());
   Object.keys(charts).forEach((k) => delete charts[k]);
@@ -214,7 +216,9 @@ const shadePlugin = {
       if (!inAttack && runStart !== null) {
         const x0 = scales.x.getPixelForValue(runStart);
         const x1 = scales.x.getPixelForValue(points[Math.max(0, i - 1)].t);
-        ctx.fillStyle = color + "22";
+        // hsl strings don't take hex alpha suffixes: build an rgba fill
+        ctx.fillStyle = mixColors(color, color, 1)
+          .replace("rgb(", "rgba(").replace(")", ",0.13)");
         ctx.fillRect(x0, chartArea.top, Math.max(x1 - x0, 2),
                      chartArea.bottom - chartArea.top);
         runStart = null;
@@ -573,14 +577,11 @@ function appendMessage(role, text) {
 
 let evalData = null;
 const MODEL_META = {
-  isolation_forest: { label: "Isolation Forest", color: "#5b8def" },
-  lstm_autoencoder: { label: "LSTM-AE", color: () => cssVar("--c-dos") },
-  lightgbm: { label: "LightGBM", color: () => cssVar("--c-fuzzy") },
+  isolation_forest: { label: "Isolation Forest", color: "--m-if" },
+  lstm_autoencoder: { label: "LSTM-AE", color: "--m-ae" },
+  lightgbm: { label: "LightGBM", color: "--m-lgbm" },
 };
-const modelColor = (name) => {
-  const c = MODEL_META[name].color;
-  return typeof c === "function" ? c() : c;
-};
+const modelColor = (name) => cssVar(MODEL_META[name].color);
 
 async function loadEvaluate() {
   try {
@@ -665,15 +666,19 @@ function renderEvaluate(data) {
     type: "line",
     data: { datasets: models.map((m) => ({
       label: `${MODEL_META[m].label} (AUC ${det.models[m].window.roc_auc.mean.toFixed(3)})`,
+      // clamp fpr away from 0 so the log axis can show near-perfect curves
       data: det.models[m].roc_curve.fpr.map((x, i) =>
-        ({ x, y: det.models[m].roc_curve.tpr[i] })),
+        ({ x: Math.max(x, 2e-4), y: det.models[m].roc_curve.tpr[i] })),
       parsing: false, borderColor: modelColor(m), borderWidth: 1.6,
       pointRadius: 0,
     })) },
     options: {
       maintainAspectRatio: false,
       scales: {
-        x: { min: 0, max: 1, title: { display: true, text: "false positive rate" } },
+        x: { type: "logarithmic", min: 2e-4, max: 1,
+             ticks: { callback: (v) =>
+               Math.log10(v) % 1 === 0 ? v.toExponential(0) : null },
+             title: { display: true, text: "false positive rate (log scale)" } },
         y: { min: 0, max: 1, title: { display: true, text: "true positive rate" } },
       },
       plugins: { legend: { display: true, position: "bottom",
@@ -802,4 +807,5 @@ function renderEvaluate(data) {
 chartDefaults();
 buildScoreChart();
 renderAll();
+booted = true;
 connect();

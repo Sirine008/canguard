@@ -137,3 +137,73 @@ Ollama is down (returns raw KB entries, flagged).
 generation check (llama3.2:3b, 6 questions): expected code cited in 4/6
 (missed: P0420 answered via sibling P0430 context, P0442 via the EVAP
 family) — logged as a small-model limitation, not hidden.
+
+## Phase 5 — API, simulator, dashboard
+
+**Done:** FastAPI (`/health`, `/metrics`, `/detect`, `/diagnose`,
+WS `/stream`, serves `frontend/`), replay engine (speed 1-10x,
+pause/seek, window scoring every 0.25 virtual seconds, bus stats, per-ID
+timing-deviation buckets), custom HTML/CSS/JS dashboard per the design
+spec (no framework, Chart.js vendored locally so the demo works offline),
+`run.ps1` one-command start, optional Dockerfile. 22 pytest tests pass
+(parser, features, API).
+
+**Decisions**
+- Scoring cadence is virtual-time based (0.25 s) instead of per-stride:
+  at ~2000 msg/s a stride-32 cadence would emit ~60 detections/s and flood
+  the websocket/chart with no added value.
+- Live "suspect ID" heuristic for direct labels: most frequent unknown ID
+  when the window has unknown IDs (DoS/fuzzy), else the ID with the most
+  NEGATIVE period deviation (spoofed frames arrive too fast); max |dev|
+  wrongly picked delayed legitimate IDs.
+- Chart.js vendored into `frontend/js/vendor/` rather than hot-linked.
+
+**Bugs found during the Playwright run-through (all fixed, re-verified)**
+- Boot crash: the initial theme call hit a temporal-dead-zone reference
+  (`charts` const used before declaration) and silently killed the app
+  before the websocket connect. Added a boot guard.
+- Attack-period shading rendered black: hex alpha appended to an `hsl()`
+  string is invalid for canvas; replaced with a computed rgba fill.
+- ROC panel looked empty: all curves hug fpr~0 at this performance level;
+  switched to a log FPR axis (standard for near-perfect IDS ROCs), ticks
+  restricted to powers of ten.
+- Model colors collided with the attack-type palette (purple=DoS,
+  teal=Fuzzy); models now use a separate blue ramp, themed for dark mode.
+- Grid blowout at 1280 px (canvas would not shrink): `min-width: 0` on
+  grid children.
+
+**Dashboard self-evaluation vs the course grid**
+
+| criterion | verdict |
+|---|---|
+| 1. Overall view | Good: one screen per tab, no data overload, chart type matches data type (line = score over time, heatmap = ID x time deviation, bars = per-class F1, box = latency distribution), metadata footer present. |
+| 2. Colors | Good after fixes: 3 color roles respected (qualitative attack palette identical across all tabs; sequential scale for confusion matrix; diverging for timing deviation; alert orange only on threshold crossings; models on a separate blue ramp). |
+| 3. Design | Good: white cards on tinted bg, 4px grid, no shadows/gradients/emoji, stats row without boxes, no duplicated numbers. |
+| 4. Text | Good: 2 fonts (Jakarta UI, Roboto Mono for all numbers incl. chart axes via Chart.js defaults), sizes per spec, direct labels on the score spike. |
+| 5. Menu | Good: top segmented tabs, source/model pill selectors, CAN-ID + attack-type filters. |
+| 6. Interactivity | Good: play/pause/seek/speed, click event -> seek, hover tooltips with exact values, light/dark persisted in localStorage, 150 ms transitions, responsive to 1280 px. |
+
+Remaining known imperfections (accepted, documented): the live anomaly
+line sits low on the fixed [0,1] axis (the spec forbids auto-zoom — honest
+but visually flat in calm segments); on the RPM replay the model
+occasionally labels windows "gear" (the gear/RPM class confusion is a real
+model property, visible in the confusion matrix, not a dashboard bug).
+
+## Phase 6 — Embedded export (guide only, no hardware claims)
+
+**Done:** `src/models/tiny_ae.py` — dense autoencoder 8->16->4->16->8
+(428 parameters) over the window features, trained on attack-free train
+windows, same split/threshold policy as the main models: **test ROC-AUC
+0.9996 (PC)**. Exports `models/tiny_ae.onnx` (2.8 KB) +
+`tiny_ae_int8.onnx` + `tiny_ae_meta.json` (scaling constants, threshold).
+`embedded/README.md` (X-CUBE-AI import, measurement procedure with
+DWT->CYCCNT, safe bus-connection options) + `embedded/canguard_inference.c`
+skeleton. No on-board numbers are claimed anywhere.
+
+**Findings**
+- Dynamic int8 quantization makes this model BIGGER (5.8 KB vs 2.8 KB):
+  quantization metadata outweighs 428 parameters. Documented: import the
+  fp32 ONNX into Cube.AI.
+- torch 2.15 dynamo exporter emits value_info that onnxruntime's
+  quantizer rejects (shape-inference clash); the tiny model uses the
+  legacy exporter (`dynamo=False`).

@@ -112,8 +112,15 @@ class ReplayEngine:
 
         result = self._runtime.score_window(features, sequence, self.model)
         result["t"] = round(float(self._times[end_row - 1]), 4)
-        # ID with the largest period deviation in the window (direct label)
-        suspect = int(ids[int(np.argmax(np.abs(self._rel_dev[rows])))])
+        # Suspect ID for the direct label: floods/fuzzing inject unknown IDs
+        # (most frequent unknown), spoofing compresses the period of a known
+        # ID (most negative deviation = arriving far too fast).
+        unknown_mask = self._unknown[rows] == 1
+        if unknown_mask.any():
+            values, counts = np.unique(ids[unknown_mask], return_counts=True)
+            suspect = int(values[int(np.argmax(counts))])
+        else:
+            suspect = int(ids[int(np.argmin(self._rel_dev[rows]))])
         result["suspect_id"] = f"{suspect:03X}"
         # Ground truth for the dashboard's shaded attack periods
         labels = self.frame["label"].to_numpy()[rows]

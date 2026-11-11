@@ -1,0 +1,37 @@
+{
+  "features": [
+    "id_entropy",
+    "unique_id_count",
+    "unknown_ratio",
+    "mean_dt",
+    "std_dt",
+    "mean_rel_dev",
+    "mean_abs_rel_dev",
+    "max_abs_rel_dev"
+  ],
+  "feature_mean": [
+    4.366818904876709,
+    22.037694931030273,
+    0.0,
+    0.0005424012779258192,
+    0.0007822650368325412,
+    0.00023561567650176585,
+    0.06538575142621994,
+    0.4222666025161743
+  ],
+  "feature_std": [
+    0.07098816335201263,
+    1.272499918937683,
+    9.999999974752427e-07,
+    6.546348595293239e-05,
+    0.0002074328513117507,
+    0.11849883943796158,
+    0.11582663655281067,
+    0.9725713729858398
+  ],
+  "threshold_mse": 0.12163516879081726,
+  "threshold_policy": "val @ 1% FPR",
+  "n_parameters": 428,
+  "test_roc_auc_pc": 0.9996211014523213,
+  "note": "AUC measured on PC with the standard test split; no on-target numbers are claimed until measured on the board."
+}

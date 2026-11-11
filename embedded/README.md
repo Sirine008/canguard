@@ -18,8 +18,10 @@ window-level features used by the Isolation Forest
 train windows and thresholded the same way (val @ 1 % FPR). Its PC-measured
 test ROC-AUC is in `models/tiny_ae_meta.json`, directly comparable with the
 main models in `reports/metrics.json`. A dynamically quantized variant
-(`tiny_ae_int8.onnx`) is provided; for Cube.AI you can also let the tool
-apply post-training quantization from the fp32 ONNX.
+(`tiny_ae_int8.onnx`) is provided for completeness, but at 428 parameters
+the quantization metadata outweighs the weights (int8 file 5.8 KB vs fp32
+2.8 KB) — **import the fp32 ONNX** and, if quantization is ever needed,
+let Cube.AI apply its own post-training quantization.
 
 Produce the artifacts (after Phases 1–3):
 

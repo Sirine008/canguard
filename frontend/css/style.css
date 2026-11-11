@@ -24,6 +24,11 @@
   --div-fast: hsl(190 55% 40%);
   --div-slow: hsl(275 45% 55%);
 
+  /* models — one blue family, distinct from the attack-type palette */
+  --m-if: hsl(221 70% 72%);
+  --m-ae: hsl(221 83% 53%);
+  --m-lgbm: hsl(222 50% 30%);
+
   --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "Roboto Mono", ui-monospace, monospace;
 }
@@ -39,6 +44,9 @@
   --alert-bg: hsl(20 50% 13%);
   --seq-lo: hsl(221 30% 16%);
   --seq-hi: hsl(217 80% 72%);
+  --m-if: hsl(221 60% 75%);
+  --m-ae: hsl(217 90% 60%);
+  --m-lgbm: hsl(220 35% 45%);
 }
 
 * { box-sizing: border-box; }
@@ -127,6 +135,7 @@ main { max-width: 1400px; margin: 0 auto; padding: 12px 16px 24px; }
 .tab-panel.active { display: block; }
 
 .grid { display: grid; gap: 12px; margin-bottom: 12px; }
+.grid > .card { min-width: 0; }  /* let canvases shrink inside grid tracks */
 .monitor-row-1 { grid-template-columns: 1fr 220px; }
 .monitor-row-2 { grid-template-columns: 2fr 1fr; }
 .eval-row { grid-template-columns: 1fr 1fr; align-items: start; }

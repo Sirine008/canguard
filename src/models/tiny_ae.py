@@ -93,9 +93,11 @@ def main() -> None:
 
     dummy = torch.zeros(1, len(features))
     fp32_path = MODELS_DIR / "tiny_ae.onnx"
+    # Legacy exporter: the dynamo exporter writes value_info metadata that
+    # onnxruntime's quantization shape inference rejects for this graph.
     torch.onnx.export(model, dummy, str(fp32_path),
                       input_names=["features"], output_names=["reconstruction"],
-                      opset_version=17)
+                      opset_version=17, dynamo=False)
 
     from onnxruntime.quantization import QuantType, quantize_dynamic
     int8_path = MODELS_DIR / "tiny_ae_int8.onnx"
