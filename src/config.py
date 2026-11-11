@@ -41,11 +41,12 @@ EVAL_SEEDS: tuple[int, ...] = (42, 43, 44)  # mean +/- std reported over these
 # ---------------------------------------------------------------------------
 # Parsing
 # ---------------------------------------------------------------------------
-# Each attack file contains one very large timestamp gap near the end
-# (Verma et al., ROAD paper: ~2328 s DoS, ~2466 s Fuzzy, ~1949 s gear,
-# ~1952 s RPM). Any inter-message gap above this threshold is treated as
-# a recording discontinuity and the file is trimmed just before it.
-GAP_THRESHOLD_S: float = 60.0
+# Each attack file contains one recording discontinuity near the end
+# (documented by Verma et al., ROAD paper): a 22.4 s break at ~2328 s in
+# DoS and gaps of 2539/5588/7745 s in Fuzzy/gear/RPM. The traffic after
+# the break is attack-free in every file. The second-largest gap in any
+# file is 0.71 s, so a 10 s threshold isolates exactly these four breaks.
+GAP_THRESHOLD_S: float = 10.0
 
 # Optional time-ordered subsampling (1.0 = keep everything). Reduce if the
 # machine runs out of memory: 0.25 keeps the first quarter of each file.

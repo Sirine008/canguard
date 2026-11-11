@@ -1,0 +1,89 @@
+{
+  "window_size": 64,
+  "window_stride": 32,
+  "n_messages": 13994074,
+  "n_windows": 437292,
+  "splits": {
+    "train": {
+      "normal": {
+        "windows": 18540,
+        "attack_windows": 0,
+        "attack_ratio": 0.0
+      },
+      "dos": {
+        "windows": 52024,
+        "attack_windows": 21632,
+        "attack_ratio": 0.4158
+      },
+      "fuzzy": {
+        "windows": 55270,
+        "attack_windows": 27710,
+        "attack_ratio": 0.5014
+      },
+      "gear": {
+        "windows": 66600,
+        "attack_windows": 35719,
+        "attack_ratio": 0.5363
+      },
+      "rpm": {
+        "windows": 69948,
+        "attack_windows": 38493,
+        "attack_ratio": 0.5503
+      }
+    },
+    "val": {
+      "normal": {
+        "windows": 6179,
+        "attack_windows": 0,
+        "attack_ratio": 0.0
+      },
+      "dos": {
+        "windows": 17340,
+        "attack_windows": 6661,
+        "attack_ratio": 0.3841
+      },
+      "fuzzy": {
+        "windows": 18422,
+        "attack_windows": 6107,
+        "attack_ratio": 0.3315
+      },
+      "gear": {
+        "windows": 22199,
+        "attack_windows": 12044,
+        "attack_ratio": 0.5425
+      },
+      "rpm": {
+        "windows": 23315,
+        "attack_windows": 13416,
+        "attack_ratio": 0.5754
+      }
+    },
+    "test": {
+      "normal": {
+        "windows": 6179,
+        "attack_windows": 0,
+        "attack_ratio": 0.0
+      },
+      "dos": {
+        "windows": 17340,
+        "attack_windows": 5967,
+        "attack_ratio": 0.3441
+      },
+      "fuzzy": {
+        "windows": 18422,
+        "attack_windows": 6822,
+        "attack_ratio": 0.3703
+      },
+      "gear": {
+        "windows": 22199,
+        "attack_windows": 11726,
+        "attack_ratio": 0.5282
+      },
+      "rpm": {
+        "windows": 23315,
+        "attack_windows": 13092,
+        "attack_ratio": 0.5615
+      }
+    }
+  }
+}

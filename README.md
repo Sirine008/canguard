@@ -38,12 +38,13 @@ python -m src.data.parser
 
 ### Known dataset issues (handled)
 
-- The Fuzzy, gear and RPM files each contain one very large timestamp gap
-  (2539 s, 5588 s and 7745 s respectively in this copy — an issue documented
-  by Verma et al. in the ROAD dataset paper). The parser detects any
-  inter-message gap > 60 s automatically and trims the file just before it;
-  the trimmed captures span 2466 s / 1949 s / 1952 s. The DoS file in this
-  distribution has no gap above 60 s (largest: 22.4 s) and is kept whole.
+- Each attack file contains one recording discontinuity near its end (an
+  issue documented by Verma et al. in the ROAD dataset paper): a 22.4 s break
+  at ~2328 s in DoS, and gaps of 2539 s / 5588 s / 7745 s in Fuzzy / gear /
+  RPM. The traffic after the break is attack-free in every file, so keeping it
+  would skew a time-ordered test split. The second-largest gap in any file is
+  0.71 s, so the parser trims at the first inter-message gap > 10 s; the
+  trimmed captures span 2328 / 2466 / 1949 / 1952 s.
 - Rows with DLC < 8 carry the R/T flag in an earlier column; the parser
   resolves the flag position per row.
 - **Limitation:** the vehicle was likely stationary during the attack
