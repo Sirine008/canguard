@@ -1,0 +1,33 @@
+# Core data stack
+numpy>=1.26
+pandas>=2.1
+pyarrow>=14.0
+
+# Visualization / EDA
+matplotlib>=3.8
+seaborn>=0.13
+jupyter>=1.0
+nbconvert>=7.0
+ipykernel>=6.0
+
+# ML (CPU only)
+scikit-learn>=1.4
+torch>=2.2            # install CPU wheel: pip install torch --index-url https://download.pytorch.org/whl/cpu
+lightgbm>=4.3
+onnx>=1.15
+onnxruntime>=1.17
+
+# RAG assistant
+sentence-transformers>=2.5
+chromadb>=0.4
+ollama>=0.1.7
+
+# API + simulator
+fastapi>=0.110
+uvicorn[standard]>=0.27
+websockets>=12.0
+python-multipart>=0.0.9
+
+# Tests
+pytest>=8.0
+httpx>=0.27           # FastAPI test client

@@ -1,0 +1,36 @@
+# Environments
+.venv/
+venv/
+env/
+
+# Data (large files, not versioned — see README for download instructions)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Saved models (large binaries)
+models/*.pt
+models/*.onnx
+models/*.pkl
+models/*.joblib
+
+# Vector store
+knowledge_base/chroma/
+*.faiss
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log

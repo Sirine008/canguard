@@ -1,0 +1,63 @@
+{
+  "dos": {
+    "file": "DoS_dataset.csv",
+    "gap_seconds": 0.0,
+    "rows_before_trim": 3665771,
+    "rows_after_trim": 3665771,
+    "rows_final": 3665771,
+    "injected_rows": 587521,
+    "injected_ratio": 0.1603,
+    "duration_s": 2832.7,
+    "unique_ids": 27,
+    "parse_seconds": 35.2
+  },
+  "fuzzy": {
+    "file": "Fuzzy_dataset.csv",
+    "gap_seconds": 2539.5,
+    "rows_before_trim": 3838860,
+    "rows_after_trim": 2947792,
+    "rows_final": 2947792,
+    "injected_rows": 491847,
+    "injected_ratio": 0.1669,
+    "duration_s": 2466.0,
+    "unique_ids": 2048,
+    "parse_seconds": 33.0
+  },
+  "gear": {
+    "file": "gear_dataset.csv",
+    "gap_seconds": 5588.1,
+    "rows_before_trim": 4443142,
+    "rows_after_trim": 3552074,
+    "rows_final": 3552074,
+    "injected_rows": 597252,
+    "injected_ratio": 0.1681,
+    "duration_s": 1949.2,
+    "unique_ids": 26,
+    "parse_seconds": 27.9
+  },
+  "rpm": {
+    "file": "RPM_dataset.csv",
+    "gap_seconds": 7744.9,
+    "rows_before_trim": 4621702,
+    "rows_after_trim": 3730634,
+    "rows_final": 3730634,
+    "injected_rows": 654897,
+    "injected_ratio": 0.1755,
+    "duration_s": 1952.4,
+    "unique_ids": 26,
+    "parse_seconds": 35.4
+  },
+  "normal": {
+    "file": "normal_run_data.txt",
+    "malformed_lines": 1,
+    "gap_seconds": 0.0,
+    "rows_before_trim": 988871,
+    "rows_after_trim": 988871,
+    "rows_final": 988871,
+    "injected_rows": 0,
+    "injected_ratio": 0.0,
+    "duration_s": 506.4,
+    "unique_ids": 27,
+    "parse_seconds": 11.9
+  }
+}
