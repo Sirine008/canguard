@@ -207,3 +207,14 @@ skeleton. No on-board numbers are claimed anywhere.
 - torch 2.15 dynamo exporter emits value_info that onnxruntime's
   quantizer rejects (shape-inference clash); the tiny model uses the
   legacy exporter (`dynamo=False`).
+
+## Phase 7 — Tests, README, packaging
+
+**Done:** 22 pytest tests green (parser 8, features/split 6, API 8 —
+model/KB-dependent tests self-skip on a fresh clone); full README rewrite
+(problem statement, Mermaid architecture, dataset citations + handled
+issues, methodology incl. leakage control, real result tables, honest
+findings, limitations incl. benchmark-easiness, future work); real
+dashboard screenshots in `reports/screenshots/`; this decision log.
+Repository left unpushed on purpose — push commands handed over
+separately.
