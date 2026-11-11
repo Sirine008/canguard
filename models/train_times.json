@@ -1,0 +1,23 @@
+{
+  "42": {
+    "isolation_forest_s": 1.44,
+    "lightgbm_s": 2.76,
+    "lstm_ae_s": 286.0,
+    "lstm_ae_epochs": 7,
+    "lstm_ae_best_val_loss": 0.055694
+  },
+  "43": {
+    "isolation_forest_s": 1.82,
+    "lightgbm_s": 3.32,
+    "lstm_ae_s": 171.4,
+    "lstm_ae_epochs": 7,
+    "lstm_ae_best_val_loss": 0.055821
+  },
+  "44": {
+    "isolation_forest_s": 5.68,
+    "lightgbm_s": 6.62,
+    "lstm_ae_s": 135.1,
+    "lstm_ae_epochs": 6,
+    "lstm_ae_best_val_loss": 0.056102
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "norm": {
+    "isolation_forest": {
+      "lo": -0.14919606402714747,
+      "hi": 0.34873915420756607
+    },
+    "lstm_autoencoder": {
+      "lo": 0.030663039050996304,
+      "hi": 5.196368242263895
+    }
+  },
+  "thresholds": {
+    "isolation_forest": {
+      "fpr_target": 0.6296939306230819,
+      "f1_optimal": 0.5023738543834056,
+      "f1_at_f1_optimal_test": 0.9800442877920308
+    },
+    "lstm_autoencoder": {
+      "fpr_target": 0.02839120291173458,
+      "f1_optimal": 0.02802157960832119,
+      "f1_at_f1_optimal_test": 0.9883886035802911
+    }
+  }
+}

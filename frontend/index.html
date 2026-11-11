@@ -1,0 +1,247 @@
+<!doctype html>
+<!--
+  PANEL GRID PLAN (decided before coding)
+
+  topbar   [logo "canguard"] [tabs: Monitor | Diagnose | Evaluate]
+           [source pill] [model pill] [Live pill] [theme toggle]
+
+  MONITOR
+    stats row (no boxes): frames/s · bus load % · active IDs · p95 latency
+    row 1: [ anomaly score line chart          2fr ][ bus state card 220px ]
+    row 2: [ Δt-deviation heatmap (ID × time)  2fr ][ events list    1fr  ]
+    row 3: [ recent frames table (6 rows, collapsible)        full width ]
+    row 4: [ player bar: play · time · progress+markers · speed         ]
+    footer: dataset · citation · trimming note · window · threshold ·
+            model version · last update
+
+  DIAGNOSE
+    [ chat thread + source-code pills, example questions when empty ]
+    [ question input + send ]
+
+  EVALUATE  (all panels: test set only, stated in headers)
+    row 1: [ F1 per model per attack, error bars ][ ROC curves        ]
+    row 2: [ confusion matrix (rows = true)      ][ latency box plot  ]
+    row 3: [ model comparison table  ][ episode metrics table         ]
+    footnote: dataset limitation (stationary vehicle in attack captures)
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>canguard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 16 16" width="16" height="16" fill="none"
+           stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+           stroke-linejoin="round">
+        <polyline points="1.5,11.5 5,7.5 8,9.5 11,3.5 14.5,6.5"/>
+      </svg>
+    </span>
+    <span class="brand-name">canguard</span>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab active" data-tab="monitor" role="tab">Monitor</button>
+    <button class="tab" data-tab="diagnose" role="tab">Diagnose</button>
+    <button class="tab" data-tab="evaluate" role="tab">Evaluate</button>
+  </nav>
+
+  <div class="topbar-right">
+    <label class="pill-select">
+      <span class="pill-select-label">source</span>
+      <select id="source-select">
+        <option value="rpm" selected>RPM_dataset · test</option>
+        <option value="dos">DoS_dataset · test</option>
+        <option value="fuzzy">Fuzzy_dataset · test</option>
+        <option value="gear">gear_dataset · test</option>
+        <option value="normal">normal_run · test</option>
+      </select>
+    </label>
+    <label class="pill-select">
+      <span class="pill-select-label">model</span>
+      <select id="model-select">
+        <option value="lstm_autoencoder" selected>lstm-ae v1.0</option>
+        <option value="isolation_forest">iforest v1.0</option>
+        <option value="lightgbm">lightgbm v1.0</option>
+      </select>
+    </label>
+    <span class="live-pill" id="live-pill"><span class="live-dot"></span>Live</span>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+           stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="8" cy="8" r="3.2"/>
+        <path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.4 3.4l1.3 1.3M11.3 11.3l1.3 1.3M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+<!-- ============================= MONITOR ============================= -->
+<section id="tab-monitor" class="tab-panel active">
+
+  <div class="stats-row">
+    <div class="stat"><span class="stat-label">frames / s</span>
+      <span class="stat-value" id="stat-fps">–</span></div>
+    <div class="stat"><span class="stat-label">bus load</span>
+      <span class="stat-value" id="stat-load">–<span class="stat-unit"> %</span></span></div>
+    <div class="stat"><span class="stat-label">active IDs</span>
+      <span class="stat-value" id="stat-ids">–</span></div>
+    <div class="stat"><span class="stat-label">p95 latency</span>
+      <span class="stat-value" id="stat-latency">–<span class="stat-unit"> ms</span></span></div>
+    <div class="stat stat-filter">
+      <span class="stat-label">filter</span>
+      <span class="filter-controls">
+        <input type="text" id="filter-id" placeholder="CAN ID (hex)" spellcheck="false">
+        <select id="filter-type">
+          <option value="">all types</option>
+          <option value="dos">DoS</option><option value="fuzzy">Fuzzy</option>
+          <option value="gear">Gear</option><option value="rpm">RPM</option>
+        </select>
+      </span>
+    </div>
+  </div>
+
+  <div class="grid monitor-row-1">
+    <div class="card">
+      <h2 class="card-title">Anomaly score <span class="card-note">window of 64 messages · threshold from val at 1% FPR</span></h2>
+      <div class="chart-wrap"><canvas id="score-chart"></canvas></div>
+    </div>
+    <div class="card bus-state" id="bus-state">
+      <span class="bus-state-label">bus state</span>
+      <span class="bus-state-value" id="bus-state-value">idle</span>
+      <span class="bus-state-detail" id="bus-state-detail">press play to start the replay</span>
+    </div>
+  </div>
+
+  <div class="grid monitor-row-2">
+    <div class="card">
+      <h2 class="card-title">Timing deviation by CAN ID <span class="card-note">Δt vs learned period · teal faster · purple slower</span></h2>
+      <div class="heatmap-wrap">
+        <canvas id="heatmap"></canvas>
+      </div>
+      <div class="heatmap-legend" aria-hidden="true">
+        <span>faster</span><span class="heatmap-scale"></span><span>slower</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Events</h2>
+      <ul class="events-list" id="events-list">
+        <li class="events-empty">no events yet</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card frames-card">
+    <h2 class="card-title">Recent frames
+      <button class="link-button" id="frames-toggle">Show all</button>
+    </h2>
+    <table class="frames-table">
+      <thead><tr>
+        <th>time (s)</th><th>ID</th><th>DLC</th><th>data</th><th>flag</th>
+      </tr></thead>
+      <tbody id="frames-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card player-bar">
+    <button class="play-button" id="play-button" aria-label="Play">
+      <svg class="icon-play" viewBox="0 0 16 16" width="14" height="14"
+           fill="currentColor"><path d="M4.5 2.8v10.4L13 8z"/></svg>
+      <svg class="icon-pause" viewBox="0 0 16 16" width="14" height="14"
+           fill="currentColor"><path d="M4 2.8h2.6v10.4H4zM9.4 2.8H12v10.4H9.4z"/></svg>
+    </button>
+    <span class="player-time" id="player-time">0.0 / 0.0 s</span>
+    <div class="progress" id="progress">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-markers" id="progress-markers"></div>
+      <div class="progress-handle" id="progress-handle"></div>
+    </div>
+    <button class="speed-pill" id="speed-pill">1×</button>
+  </div>
+
+  <p class="footer-meta" id="footer-meta">
+    HCRL Car-Hacking Dataset (Seo, Song &amp; Kim, 2018) · attack files trimmed
+    at the terminal recording gap (&gt;10 s) · window 64 msgs, stride 32 ·
+    threshold: val @ 1% FPR · model <span id="meta-model">lstm-ae v1.0</span> ·
+    updated <span id="meta-updated">–</span>
+  </p>
+</section>
+
+<!-- ============================ DIAGNOSE ============================= -->
+<section id="tab-diagnose" class="tab-panel">
+  <div class="card diagnose-card">
+    <h2 class="card-title">DTC diagnostic assistant
+      <span class="card-note">answers only from the generic OBD-II knowledge base (SAE J2012)</span></h2>
+    <div class="chat" id="chat">
+      <div class="chat-empty" id="chat-empty">
+        <p class="chat-empty-hint">Ask about a diagnostic trouble code or a CAN bus symptom:</p>
+        <div class="example-pills">
+          <button class="example-pill">What does P0171 mean and what should I check first?</button>
+          <button class="example-pill">P0420 — is my catalytic converter dead?</button>
+          <button class="example-pill">Lost communication with the ECM, where do I start?</button>
+          <button class="example-pill">How do I check CAN bus termination resistance?</button>
+        </div>
+      </div>
+    </div>
+    <form class="chat-form" id="chat-form">
+      <input type="text" id="chat-input" placeholder="e.g. cylinder 3 misfire — coil or injector?"
+             autocomplete="off" maxlength="500">
+      <button type="submit" class="chat-send">Ask</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============================ EVALUATE ============================= -->
+<section id="tab-evaluate" class="tab-panel">
+  <div class="grid eval-row">
+    <div class="card">
+      <h2 class="card-title">F1 per attack type <span class="card-note">test set · mean ± std over 3 seeds · bars start at 0</span></h2>
+      <div class="chart-wrap"><canvas id="f1-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2 class="card-title">ROC — any attack vs normal <span class="card-note">test set</span></h2>
+      <div class="chart-wrap chart-square"><canvas id="roc-chart"></canvas></div>
+    </div>
+  </div>
+  <div class="grid eval-row">
+    <div class="card">
+      <h2 class="card-title">Confusion matrix — LightGBM <span class="card-note">test set · rows = true class</span></h2>
+      <div id="confusion-matrix" class="confusion"></div>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Inference latency per window <span class="card-note">single window · CPU</span></h2>
+      <div class="chart-wrap"><canvas id="latency-chart"></canvas></div>
+    </div>
+  </div>
+  <div class="grid eval-row">
+    <div class="card">
+      <h2 class="card-title">Model comparison <span class="card-note">test set · window level · mean ± std</span></h2>
+      <table class="compare-table" id="compare-table"></table>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Episode detection <span class="card-note">test set · per attack episode</span></h2>
+      <table class="compare-table" id="episode-table"></table>
+    </div>
+  </div>
+  <p class="footer-meta">
+    Limitation: the vehicle was likely stationary during attack captures, so
+    normal traffic inside attack files differs from the driving
+    normal_run capture (domain shift). All metrics above: test split only,
+    time-ordered 60/20/20 per file.
+  </p>
+</section>
+</main>
+
+<script src="js/vendor/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

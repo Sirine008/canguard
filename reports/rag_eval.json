@@ -1,0 +1,281 @@
+{
+  "n_questions": 18,
+  "retrieval_hit_rate": {
+    "@1": 0.588,
+    "@3": 0.941,
+    "@5": 1.0
+  },
+  "refusal_correct": "1/1",
+  "details": [
+    {
+      "question": "What does P0171 mean and what should I check first?",
+      "expected": "P0171",
+      "retrieved": [
+        "P0171",
+        "P0172",
+        "P0174",
+        null,
+        "P0101"
+      ],
+      "top_similarity": 1.0,
+      "rank": 1
+    },
+    {
+      "question": "My scanner shows system too rich on bank 1",
+      "expected": "P0172",
+      "retrieved": [
+        "P0174",
+        null,
+        "P0172",
+        "P0171",
+        "P0430"
+      ],
+      "top_similarity": 0.429,
+      "rank": 3
+    },
+    {
+      "question": "Catalyst efficiency below threshold bank 1 \u2014 is my catalytic converter dead?",
+      "expected": "P0420",
+      "retrieved": [
+        "P0430",
+        "P0420",
+        null,
+        "P0174",
+        "P0131"
+      ],
+      "top_similarity": 0.55,
+      "rank": 2
+    },
+    {
+      "question": "Random multiple cylinder misfire detected",
+      "expected": "P0300",
+      "retrieved": [
+        "P0300",
+        "P0301",
+        "P0302",
+        "P0303",
+        "P0304"
+      ],
+      "top_similarity": 0.572,
+      "rank": 1
+    },
+    {
+      "question": "Cylinder 3 misfire \u2014 how do I find out if it's the coil?",
+      "expected": "P0303",
+      "retrieved": [
+        "P0303",
+        "P0301",
+        "P0302",
+        "P0304",
+        "P0300"
+      ],
+      "top_similarity": 0.457,
+      "rank": 1
+    },
+    {
+      "question": "Code says EVAP small leak detected",
+      "expected": "P0442",
+      "retrieved": [
+        "P0442",
+        "P0455",
+        "P0440",
+        "P0172",
+        null
+      ],
+      "top_similarity": 0.592,
+      "rank": 1
+    },
+    {
+      "question": "Large EVAP leak right after refueling, what's the most likely cause?",
+      "expected": "P0455",
+      "retrieved": [
+        "P0442",
+        "P0455",
+        "P0440",
+        "P0172",
+        null
+      ],
+      "top_similarity": 0.597,
+      "rank": 2
+    },
+    {
+      "question": "Mass air flow sensor circuit malfunction",
+      "expected": "P0100",
+      "retrieved": [
+        "P0100",
+        "P0102",
+        "P0113",
+        "P0101",
+        "P0112"
+      ],
+      "top_similarity": 0.533,
+      "rank": 1
+    },
+    {
+      "question": "Engine coolant temperature circuit high input",
+      "expected": "P0118",
+      "retrieved": [
+        "P0118",
+        "P0117",
+        "P0116",
+        "P0113",
+        "P0112"
+      ],
+      "top_similarity": 0.614,
+      "rank": 1
+    },
+    {
+      "question": "Coolant temperature stays below thermostat regulating temperature",
+      "expected": "P0128",
+      "retrieved": [
+        "P0128",
+        "P0117",
+        "P0116",
+        "P0118",
+        "P0112"
+      ],
+      "top_similarity": 0.468,
+      "rank": 1
+    },
+    {
+      "question": "Crankshaft position sensor circuit \u2014 car cranks but won't start",
+      "expected": "P0335",
+      "retrieved": [
+        "P0340",
+        "P0335",
+        "P0016",
+        "P0131",
+        "P0010"
+      ],
+      "top_similarity": 0.435,
+      "rank": 2
+    },
+    {
+      "question": "Insufficient EGR flow code",
+      "expected": "P0401",
+      "retrieved": [
+        "P0401",
+        "P0601",
+        "P0455",
+        "P0201",
+        "P0440"
+      ],
+      "top_similarity": 0.5,
+      "rank": 1
+    },
+    {
+      "question": "What is P0700 and why is there no other engine code?",
+      "expected": "P0700",
+      "retrieved": [
+        "P0700",
+        "P0010",
+        null,
+        "P0340",
+        "P0011"
+      ],
+      "top_similarity": 1.0,
+      "rank": 1
+    },
+    {
+      "question": "Lost communication with the ECM, where do I start?",
+      "expected": "U0100",
+      "retrieved": [
+        "U0100",
+        null,
+        "P0601",
+        "P0606",
+        "U0140"
+      ],
+      "top_similarity": 0.532,
+      "rank": 1
+    },
+    {
+      "question": "What does control module bus off mean on CAN?",
+      "expected": "U0073",
+      "retrieved": [
+        null,
+        "U0001",
+        "U0073",
+        null,
+        null
+      ],
+      "top_similarity": 0.673,
+      "rank": 3
+    },
+    {
+      "question": "Left front wheel speed sensor circuit fault with ABS light on",
+      "expected": "C0035",
+      "retrieved": [
+        "C0040",
+        "C0050",
+        "C0045",
+        "C0035",
+        "U0121"
+      ],
+      "top_similarity": 0.583,
+      "rank": 4
+    },
+    {
+      "question": "How do I check CAN bus termination resistance?",
+      "expected": "U0001",
+      "retrieved": [
+        null,
+        "U0001",
+        null,
+        "U0073",
+        null
+      ],
+      "top_similarity": 0.535,
+      "rank": 2
+    },
+    {
+      "question": "What is the torque spec for the cylinder head bolts on a 2015 Golf?",
+      "expected": null,
+      "retrieved": [
+        null,
+        null,
+        "P0335",
+        null,
+        "P0016"
+      ],
+      "top_similarity": 0.164,
+      "refused": true
+    }
+  ],
+  "generation_check": {
+    "n": 6,
+    "expected_code_cited": 4,
+    "details": [
+      {
+        "question": "What does P0171 mean and what should I check first?",
+        "expected": "P0171",
+        "code_cited": true
+      },
+      {
+        "question": "My scanner shows system too rich on bank 1",
+        "expected": "P0172",
+        "code_cited": true
+      },
+      {
+        "question": "Catalyst efficiency below threshold bank 1 \u2014 is my catalytic converter dead?",
+        "expected": "P0420",
+        "code_cited": false
+      },
+      {
+        "question": "Random multiple cylinder misfire detected",
+        "expected": "P0300",
+        "code_cited": true
+      },
+      {
+        "question": "Cylinder 3 misfire \u2014 how do I find out if it's the coil?",
+        "expected": "P0303",
+        "code_cited": true
+      },
+      {
+        "question": "Code says EVAP small leak detected",
+        "expected": "P0442",
+        "code_cited": false
+      }
+    ]
+  }
+}

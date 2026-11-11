@@ -31,3 +31,5 @@ python-multipart>=0.0.9
 # Tests
 pytest>=8.0
 httpx>=0.27           # FastAPI test client
+pypdf>=4.0            # PDF indexing in the knowledge base
+onnxscript>=0.1       # torch>=2.15 ONNX exporter dependency

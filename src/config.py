@@ -62,6 +62,39 @@ WINDOW_STRIDE: int = 32        # stride between consecutive windows
 SPLIT_FRACTIONS: tuple[float, float, float] = (0.6, 0.2, 0.2)
 
 # ---------------------------------------------------------------------------
+# Models (Phase 3)
+# ---------------------------------------------------------------------------
+# Unsupervised threshold: chosen on VAL normal windows at this target
+# false-positive rate (the F1-optimal threshold is reported for comparison).
+VAL_TARGET_FPR: float = 0.01
+
+# LSTM autoencoder (CPU budget: hidden <= 64, early stopping)
+AE_HIDDEN: int = 48
+AE_MAX_EPOCHS: int = 15
+AE_PATIENCE: int = 2
+AE_BATCH_SIZE: int = 256
+AE_LR: float = 1e-3
+AE_MAX_TRAIN_WINDOWS: int = 40_000   # subsample of attack-free train windows
+AE_MAX_VAL_WINDOWS: int = 8_000
+
+# Episode evaluation: injected frames closer than this belong to the same
+# attack episode (bursts in these captures are separated by seconds).
+EPISODE_GAP_S: float = 1.0
+
+# ---------------------------------------------------------------------------
+# RAG assistant (Phase 4)
+# ---------------------------------------------------------------------------
+EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
+CHROMA_DIR: Path = KNOWLEDGE_BASE_DIR / "chroma"
+CHROMA_COLLECTION: str = "canguard_kb"
+OLLAMA_MODEL: str = "llama3.2:3b"
+OLLAMA_HOST: str = "http://localhost:11434"
+RAG_TOP_K: int = 5
+# Below this best-match cosine similarity the assistant refuses to answer
+# instead of hallucinating ("not in knowledge base").
+RAG_MIN_SIMILARITY: float = 0.35
+
+# ---------------------------------------------------------------------------
 # Attack type encoding (shared across models, figures and the dashboard)
 # ---------------------------------------------------------------------------
 ATTACK_TYPES: tuple[str, ...] = ("normal", "dos", "fuzzy", "gear", "rpm")
